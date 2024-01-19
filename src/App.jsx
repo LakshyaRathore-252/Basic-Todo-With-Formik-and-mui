@@ -24,37 +24,16 @@ const App = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [editTodo, setEditTodo] = useState(false);
-
-
+  const [editingTodo, setEditingTodo] = useState(null);
+  const [todosList, setTodos] = useState([]);
+  const label = { inputProps: { 'aria-label': 'Switch demo' } };
   const lightTheme = createTheme();
   const darkTheme = createTheme({
     palette: {
       mode: 'dark',
     },
   });
-
   const [currentTheme, setCurrentTheme] = useState(darkTheme);
-
-  const toggleTheme = () => {
-    if (currentTheme.palette.mode === 'light') {
-      setCurrentTheme(darkTheme);
-
-    }
-    else {
-      setCurrentTheme(lightTheme);
-
-    }
-
-  };
-
-
-
-
-
-
-  const [todosList, setTodos] = useState([]);
-  const label = { inputProps: { 'aria-label': 'Switch demo' } };
-  const [editingTodo, setEditingTodo] = useState(null);
 
   const formik = useFormik({
     initialValues: {
@@ -94,6 +73,7 @@ const App = () => {
 
   });
 
+  // Handle Complete Toggle Functionality
   const handleToggleComplete = (id) => {
     setTodos((prevTodos) =>
       prevTodos.map((todo) =>
@@ -102,33 +82,47 @@ const App = () => {
     );
   };
 
+  // Handle Delete  Functionality
   const handleDelete = (id) => {
     setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
     setSnackbarMessage(`Todo deleted`);
     setOpenSnackbar(true);
   }
 
+  // Handle  Edit Functionality
   const handleEditTodo = (id) => {
     const selectedTodo = todosList.find((todo) => todo.id === id);
     // Set the selected todo for editing
     setEditingTodo(selectedTodo);
   };
 
+  // Handle Delete All Functionality
   const handleDeleteAll = () => {
     setTodos([]);
-  }
+  };
 
+  // Handle Cancel Edit Functionality
   const handleCancelEdit = () => {
     setEditingTodo(null);
     formik.resetForm();
   };
 
-
-
-
-
+  // Handle SnackBar Functionality
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
+  };
+
+  // Handle Theme Switch Functionality
+  const toggleTheme = () => {
+    if (currentTheme.palette.mode === 'light') {
+      setCurrentTheme(darkTheme);
+
+    }
+    else {
+      setCurrentTheme(lightTheme);
+
+    }
+
   };
 
   return (
@@ -184,74 +178,75 @@ const App = () => {
               size="small"
               onClick={() => handleDeleteAll()}
               style={{
-                margin: 'auto', textAlign: "center", display: 'flex', flexDirection: 'column', height: "40px",marginTop: "10px",
-                width: "30%", backgroundColor: "red", color: "white", borderRadius: "5px", border: "none", fontWeight: "bold", fontSize: "16px", lineHeight: "24px", padding: "10px"}}
-                  >
-                  Delete All
-          </Button>}
-        <List sx={{ margin: 'auto' }}>
-          {todosList.map((todo, id) => (
-            <ListItem
-              key={id}
-              style={{ textDecoration: todo.isCompleted ? 'line-through' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: "80%" }}
+                margin: 'auto', textAlign: "center", display: 'flex', flexDirection: 'column', height: "40px", marginTop: "10px",
+                width: "30%", backgroundColor: "red", color: "white", borderRadius: "5px", border: "none", fontWeight: "bold", fontSize: "16px", lineHeight: "24px", padding: "10px"
+              }}
             >
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={todo.isCompleted}
-                    onChange={() => handleToggleComplete(todo.id)}
-                  />
-                }
-                label={
-
-                  <ListItemText
-                    // primary={todo.todo}
-                    primary={todo.todo}
-                    style={{ textDecoration: todo.isCompleted ? 'line-through' : 'none' }}
-                  />
-
-                }
-              />
-
-              <Button
-                color="primary"
-                size="small"
-                onClick={() => handleEditTodo(todo.id)}
+              Delete All
+            </Button>}
+          <List sx={{ margin: 'auto' }}>
+            {todosList.map((todo, id) => (
+              <ListItem
+                key={id}
+                style={{ textDecoration: todo.isCompleted ? 'line-through' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: "80%" }}
               >
-                Edit
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={todo.isCompleted}
+                      onChange={() => handleToggleComplete(todo.id)}
+                    />
+                  }
+                  label={
+
+                    <ListItemText
+                      // primary={todo.todo}
+                      primary={todo.todo}
+                      style={{ textDecoration: todo.isCompleted ? 'line-through' : 'none' }}
+                    />
+
+                  }
+                />
+
+                <Button
+                  color="primary"
+                  size="small"
+                  onClick={() => handleEditTodo(todo.id)}
+                >
+                  Edit
+                </Button>
+
+                <Button
+                  color="error"
+                  size="small"
+                  onClick={() => handleDelete(todo.id)}
+                >
+                  Delete
+                </Button>
+
+
+
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={3000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <SnackbarContent
+            message={snackbarMessage}
+            action={
+              <Button color="secondary" size="small" onClick={handleSnackbarClose}>
+                Close
               </Button>
-
-              <Button
-                color="error"
-                size="small"
-                onClick={() => handleDelete(todo.id)}
-              >
-                Delete
-              </Button>
-
-
-
-            </ListItem>
-          ))}
-        </List>
-      </Box>
-
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <SnackbarContent
-          message={snackbarMessage}
-          action={
-            <Button color="secondary" size="small" onClick={handleSnackbarClose}>
-              Close
-            </Button>
-          }
-        />
-      </Snackbar>
-    </Container>
+            }
+          />
+        </Snackbar>
+      </Container>
     </ThemeProvider >
   );
 };
