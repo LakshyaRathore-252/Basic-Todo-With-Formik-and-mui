@@ -23,7 +23,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 const App = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [editTodo, setEditTodo] = useState(false);
   const [editingTodo, setEditingTodo] = useState(null);
   const [todosList, setTodos] = useState([]);
   const label = { inputProps: { 'aria-label': 'Switch demo' } };
@@ -40,7 +39,7 @@ const App = () => {
       addTodo: '',
     },
     onSubmit: (values) => {
-      if (!values.addTodo || values.addTodo.trim() === '') {
+      if (!values.addTodo || values.addTodo === '') {
         setSnackbarMessage(`Todo cannot be empty`);
         setOpenSnackbar(true);
         formik.resetForm();
@@ -94,11 +93,14 @@ const App = () => {
     const selectedTodo = todosList.find((todo) => todo.id === id);
     // Set the selected todo for editing
     setEditingTodo(selectedTodo);
+
   };
 
   // Handle Delete All Functionality
   const handleDeleteAll = () => {
     setTodos([]);
+    setOpenSnackbar(true);
+    setSnackbarMessage(`All todos deleted`);
   };
 
   // Handle Cancel Edit Functionality
@@ -188,7 +190,7 @@ const App = () => {
             {todosList.map((todo, id) => (
               <ListItem
                 key={id}
-                style={{ textDecoration: todo.isCompleted ? 'line-through' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: "80%" }}
+                style={{  display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: "80%" }}
               >
                 <FormControlLabel
                   control={
@@ -233,7 +235,7 @@ const App = () => {
 
         <Snackbar
           open={openSnackbar}
-          autoHideDuration={3000}
+          autoHideDuration={5000}
           onClose={handleSnackbarClose}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
