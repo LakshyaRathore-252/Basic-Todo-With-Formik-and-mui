@@ -179,7 +179,7 @@ const App = () => {
               onClick={() => handleDeleteAll()}
               style={{
                 margin: 'auto', textAlign: "center", display: 'flex', flexDirection: 'column', height: "40px", marginTop: "10px",
-                width: "30%", backgroundColor: "red", color: "white", borderRadius: "5px", border: "none", fontWeight: "bold", fontSize: "16px", lineHeight: "24px", padding: "10px"
+                width: "30%", backgroundColor: "red", color: "white", 
               }}
             >
               Delete All
